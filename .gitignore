@@ -1,0 +1,6 @@
+uploads/
+resources/assets/
+protected/data/
+protected/runtime/
+.DS_Store
+Thumbs.db
