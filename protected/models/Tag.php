@@ -1,30 +1,23 @@
 <?php
 
 /**
- * This is the model class for table "{{Tag}}".
+ * This is the model class for table "{{tag}}".
  *
- * The followings are the available columns in table '{{Tag}}':
- * @property integer $id
- * @property string $name
- * @property integer $post_nums
+ * The followings are the available columns in table '{{tag}}':
+ * @property string $id
+ * @property integer $preset
+ * @property string $tag_name
+ * @property string $question_count
+ * @property string $desc
  */
 class Tag extends CActiveRecord
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return Tag the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
-
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return TABLE_TAG;
+		return '{{tag}}';
 	}
 
 	/**
@@ -35,9 +28,13 @@ class Tag extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-		    array('post_nums', 'numerical', 'integerOnly'=>true),
-			array('name', 'length', 'max'=>50),
-			array('name', 'unique'),
+			array('preset', 'numerical', 'integerOnly'=>true),
+			array('tag_name', 'length', 'max'=>50),
+			array('question_count', 'length', 'max'=>10),
+			array('desc', 'length', 'max'=>250),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('id, preset, tag_name, question_count, desc', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -58,103 +55,53 @@ class Tag extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => '名称',
-			'post_nums' => '段子数',
+			'id' => 'Id',
+			'preset' => 'Preset',
+			'tag_name' => 'Tag Name',
+			'question_count' => 'Question Count',
+			'desc' => 'Desc',
 		);
 	}
-	
-	public static function filterTagsArray($tags)
+
+	/**
+	 * Retrieves a list of models based on the current search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 */
+	public function search()
 	{
-	    if (empty($tags)) return array();
-	
-	    $tags = str_replace('，', ',', $tags);
-	    $tags = explode(',', $tags);
-	    $tagsArray = array();
-	    foreach ((array)$tags as $tag) {
-	        if (!empty($tag))
-	            $tagsArray[] = strip_tags(trim($tag));
-	    }
-	
-	    $tags = $tag = null;
-	    return $tagsArray;
-	}
-	
-	public static function savePostTags($postid, $tags)
-	{
-	    $postid = (int)$postid;
-	    if (0 === $postid || empty($tags))
-	        return false;
-	
-	    if (is_string($tags))
-	        $tags = self::filterTagsArray($tags);
-	
-	    $count = 0;
-	    foreach ((array)$tags as $v) {
-	        $model = self::model()->findByAttributes(array('name'=>$v));
-	        if ($model === null) {
-	            $model = new Tag();
-	            $model->name = $v;
-	            if ($model->save()) $count++;
-	        }
-	
-	        $row = app()->getDb()->createCommand()
-    	        ->select('id')
-    	        ->from(TABLE_POST_TAG)
-    	        ->where(array('and', 'post_id = :postid', 'tag_id = :tagid'), array(':postid'=>$postid, ':tagid'=>$model->id))
-    	        ->queryScalar();
-	
-	        if ($row === false) {
-	            $columns = array('post_id'=>$postid, 'tag_id'=>$model->id);
-	            $count = app()->getDb()->createCommand()->insert(TABLE_POST_TAG, $columns);
-	            if ($count > 0) {
-	                $model->post_nums = $model->post_nums + 1;
-	                $model->save(true, array('post_nums'));
-	            }
-	        }
-	        $model = null;
-	    }
-	    return (int)$count;
-	}
-	
-	public static function deletePostTags($postid)
-	{
-	    $postid = (int)$postid;
-	    $tags = db()->createCommand()
-	        ->from(TABLE_POST_TAG)
-	        ->select('tag_id')
-	        ->where('post_id = :postid', array(':postid' => $postid))
-	        ->queryColumn();
-	    
-	    if (empty($tags)) return true;
-	    
-	    $count = app()->getDb()->createCommand()
-    	    ->delete(TABLE_POST_TAG, 'post_id = :postid', array(':postid'=>$postid));
-	    
-	    $count = 0;
-	    foreach ((array)$tags as $tagid) {
-	        $model = self::model()->findByPk($tagid);
-	        if ($model !== null) {
-	            $model->post_nums = $model->post_nums - 1;
-	            if ($model->post_nums <= 0)
-	                $model->delete() && $count++;
-	            else
-    	            $model->save(true, array('post_nums')) && $count++;
-	            
-	            $model = null;
-	        }
-	    }
-	    return (int)$count;
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria=new CDbCriteria;
+
+		$criteria->compare('id',$this->id,true);
+
+		$criteria->compare('preset',$this->preset);
+
+		$criteria->compare('tag_name',$this->tag_name,true);
+
+		$criteria->compare('question_count',$this->question_count,true);
+
+		$criteria->compare('desc',$this->desc,true);
+
+		return new CActiveDataProvider('Tag', array(
+			'criteria'=>$criteria,
+		));
 	}
 
-	
-	public function getNameLink($target = '_blank')
+	/**
+	 * Returns the static model of the specified AR class.
+	 * @return Tag the static model class
+	 */
+	public static function model($className=__CLASS__)
 	{
-	    return CHtml::link($this->name, $this->getUrl(), array('target'=>$target));
-	}
-	
-	public function getUrl()
-	{
-	    return aurl('tag/posts', array('name'=>$this->name));
+		return parent::model($className);
 	}
 }

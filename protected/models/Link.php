@@ -4,33 +4,22 @@
  * This is the model class for table "{{link}}".
  *
  * The followings are the available columns in table '{{link}}':
- * @property integer $id
+ * @property string $id
  * @property string $name
  * @property string $url
  * @property string $logo
  * @property string $desc
- * @property integer $orderid
- * @property string $nameLink
- * @property string $logoImage
- * @property string $logoLink
+ * @property string $orderid
+ * @property integer $ishome
  */
 class Link extends CActiveRecord
 {
-	/**
-	 * Returns the static model of the specified AR class.
-	 * @return Link the static model class
-	 */
-	public static function model($className=__CLASS__)
-	{
-		return parent::model($className);
-	}
-
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return TABLE_LINK;
+		return '{{link}}';
 	}
 
 	/**
@@ -38,13 +27,27 @@ class Link extends CActiveRecord
 	 */
 	public function rules()
 	{
+		// NOTE: you should only define rules for those attributes that
+		// will receive user inputs.
 		return array(
-    		array('orderid, ishome', 'numerical', 'integerOnly'=>true),
+			array('ishome', 'numerical', 'integerOnly'=>true),
 			array('name', 'length', 'max'=>50),
 			array('url, logo, desc', 'length', 'max'=>250),
-    		array('url, logo', 'url'),
-		    array('name, url', 'required'),
-		    array('name, url', 'unique'),
+			array('orderid', 'length', 'max'=>10),
+			// The following rule is used by search().
+			// Please remove those attributes that should not be searched.
+			array('id, name, url, logo, desc, orderid, ishome', 'safe', 'on'=>'search'),
+		);
+	}
+
+	/**
+	 * @return array relational rules.
+	 */
+	public function relations()
+	{
+		// NOTE: you may need to adjust the relation name and the related
+		// class name for the relations automatically generated below.
+		return array(
 		);
 	}
 
@@ -54,83 +57,59 @@ class Link extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'ID',
-			'name' => '名称',
-			'url' => '网址',
-			'logo' => 'LOGO',
-			'desc' => '描述',
-			'orderid' => '排序',
-	        'ishome' => '首页',
+			'id' => 'Id',
+			'name' => 'Name',
+			'url' => 'Url',
+			'logo' => 'Logo',
+			'desc' => 'Desc',
+			'orderid' => 'Orderid',
+			'ishome' => 'Ishome',
 		);
 	}
-	
-	public function getNameLink($target = '_blank')
+
+	/**
+	 * Retrieves a list of models based on the current search/filter conditions.
+	 *
+	 * Typical usecase:
+	 * - Initialize the model fields with values from filter form.
+	 * - Execute this method to get CActiveDataProvider instance which will filter
+	 * models according to data in model fields.
+	 * - Pass data provider to CGridView, CListView or any similar widget.
+	 *
+	 * @return CActiveDataProvider the data provider that can return the models based on the search/filter conditions.
+	 */
+	public function search()
 	{
-	    $html = '';
-	    if ($this->name && $this->url)
-	        $html = l($this->name, $this->url, array('class'=>'beta-link-item', 'target'=>$target, 'title'=>$this->desc));
-	    
-	    return $html;
-	}
-	
-	public function getLogoImage()
-	{
-	    $html = '';
-	    if ($this->logo)
-	        $html = image($this->logo, $this->name, array('class'=>'link-logo'));
-	    
-	    return $html;
-	}
-	
-	public function getLogoLink($target = '_blank')
-	{
-	    $html = '';
-	    if ($this->logo && $this->url) {
-	        $html = l($this->getLogoImage(), $this->url, array('class'=>'beta-link-item', 'target'=>$target, 'title'=>$this->desc));
-	    }
-	    
-	    return $html;
-	}
-	
-	public function getUrlValid()
-	{
-	    $pos = stripos($this->url, 'http://');
-	    return $pos === 0;
-	}
-	
-	public function getLogoValid()
-	{
-	    $pos = stripos($this->logo, 'http://');
-	    return $pos === 0;
+		// Warning: Please modify the following code to remove attributes that
+		// should not be searched.
+
+		$criteria=new CDbCriteria;
+
+		$criteria->compare('id',$this->id,true);
+
+		$criteria->compare('name',$this->name,true);
+
+		$criteria->compare('url',$this->url,true);
+
+		$criteria->compare('logo',$this->logo,true);
+
+		$criteria->compare('desc',$this->desc,true);
+
+		$criteria->compare('orderid',$this->orderid,true);
+
+		$criteria->compare('ishome',$this->ishome);
+
+		return new CActiveDataProvider('Link', array(
+			'criteria'=>$criteria,
+		));
 	}
 
-	public static function fetchLinks(CDbCriteria $criteria = null)
+	/**
+	 * Returns the static model of the specified AR class.
+	 * @return Link the static model class
+	 */
+	public static function model($className=__CLASS__)
 	{
-	    $redis = cache('redis');
-	    if ($redis) {
-	        $models = $redis->get('cache_friend_links');
-	        if ($models === false) {
-	            $models = self::fetchModels($criteria);
-	            if (count($models) > 0) {
-	                $redis->set('cache_friend_links', $models);
-	            }
-	        }
-	    }
-	    else
-	        $models = self::fetchModels();
-	    
-	    return $models;
-	}
-	
-	
-	public static function fetchModels(CDbCriteria $criteria = null)
-	{
-	    if ($criteria == null)
-    	    $criteria = new CDbCriteria();
-	    $criteria->order = 'orderid asc, id asc';
-	
-	    $models = Link::model()->findAll($criteria);
-	    return $models;
+		return parent::model($className);
 	}
 }
-

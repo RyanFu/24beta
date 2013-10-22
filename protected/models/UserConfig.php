@@ -1,24 +1,25 @@
 <?php
 
 /**
- * This is the model class for table "{{adcode}}".
+ * This is the model class for table "{{user_config}}".
  *
- * The followings are the available columns in table '{{adcode}}':
+ * The followings are the available columns in table '{{user_config}}':
  * @property string $id
- * @property string $ad_id
- * @property string $adcode
- * @property string $weight
- * @property string $intro
- * @property integer $state
+ * @property string $user_id
+ * @property string $config_name
+ * @property string $config_value
+ * @property integer $config_type
+ * @property string $name
+ * @property string $desc
  */
-class Adcode extends CActiveRecord
+class UserConfig extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{adcode}}';
+		return '{{user_config}}';
 	}
 
 	/**
@@ -29,13 +30,14 @@ class Adcode extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('state', 'numerical', 'integerOnly'=>true),
-			array('ad_id, weight', 'length', 'max'=>10),
-			array('intro', 'length', 'max'=>250),
-			array('adcode', 'safe'),
+			array('config_type', 'numerical', 'integerOnly'=>true),
+			array('user_id', 'length', 'max'=>19),
+			array('config_name', 'length', 'max'=>100),
+			array('name', 'length', 'max'=>50),
+			array('config_value, desc', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, ad_id, adcode, weight, intro, state', 'safe', 'on'=>'search'),
+			array('id, user_id, config_name, config_value, config_type, name, desc', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,11 +59,12 @@ class Adcode extends CActiveRecord
 	{
 		return array(
 			'id' => 'Id',
-			'ad_id' => 'Ad',
-			'adcode' => 'Adcode',
-			'weight' => 'Weight',
-			'intro' => 'Intro',
-			'state' => 'State',
+			'user_id' => 'User',
+			'config_name' => 'Config Name',
+			'config_value' => 'Config Value',
+			'config_type' => 'Config Type',
+			'name' => 'Name',
+			'desc' => 'Desc',
 		);
 	}
 
@@ -85,24 +88,26 @@ class Adcode extends CActiveRecord
 
 		$criteria->compare('id',$this->id,true);
 
-		$criteria->compare('ad_id',$this->ad_id,true);
+		$criteria->compare('user_id',$this->user_id,true);
 
-		$criteria->compare('adcode',$this->adcode,true);
+		$criteria->compare('config_name',$this->config_name,true);
 
-		$criteria->compare('weight',$this->weight,true);
+		$criteria->compare('config_value',$this->config_value,true);
 
-		$criteria->compare('intro',$this->intro,true);
+		$criteria->compare('config_type',$this->config_type);
 
-		$criteria->compare('state',$this->state);
+		$criteria->compare('name',$this->name,true);
 
-		return new CActiveDataProvider('Adcode', array(
+		$criteria->compare('desc',$this->desc,true);
+
+		return new CActiveDataProvider('UserConfig', array(
 			'criteria'=>$criteria,
 		));
 	}
 
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @return Adcode the static model class
+	 * @return UserConfig the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

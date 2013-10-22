@@ -1,23 +1,31 @@
 <?php
 
 /**
- * This is the model class for table "{{feedback}}".
+ * This is the model class for table "{{question}}".
  *
- * The followings are the available columns in table '{{feedback}}':
+ * The followings are the available columns in table '{{question}}':
  * @property string $id
  * @property string $user_id
+ * @property string $title
+ * @property string $view_count
+ * @property string $favorite_count
+ * @property string $answer_count
+ * @property string $vote_count
+ * @property string $bounty
  * @property integer $create_time
  * @property string $create_ip
+ * @property integer $locked
+ * @property string $tags
  * @property string $content
  */
-class Feedback extends CActiveRecord
+class Question extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{feedback}}';
+		return '{{question}}';
 	}
 
 	/**
@@ -28,13 +36,15 @@ class Feedback extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('create_time', 'numerical', 'integerOnly'=>true),
+			array('create_time, locked', 'numerical', 'integerOnly'=>true),
 			array('user_id', 'length', 'max'=>19),
+			array('title, tags', 'length', 'max'=>250),
+			array('view_count, favorite_count, answer_count, vote_count, bounty', 'length', 'max'=>10),
 			array('create_ip', 'length', 'max'=>15),
 			array('content', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, user_id, create_time, create_ip, content', 'safe', 'on'=>'search'),
+			array('id, user_id, title, view_count, favorite_count, answer_count, vote_count, bounty, create_time, create_ip, locked, tags, content', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -57,8 +67,16 @@ class Feedback extends CActiveRecord
 		return array(
 			'id' => 'Id',
 			'user_id' => 'User',
+			'title' => 'Title',
+			'view_count' => 'View Count',
+			'favorite_count' => 'Favorite Count',
+			'answer_count' => 'Answer Count',
+			'vote_count' => 'Vote Count',
+			'bounty' => 'Bounty',
 			'create_time' => 'Create Time',
 			'create_ip' => 'Create Ip',
+			'locked' => 'Locked',
+			'tags' => 'Tags',
 			'content' => 'Content',
 		);
 	}
@@ -85,20 +103,36 @@ class Feedback extends CActiveRecord
 
 		$criteria->compare('user_id',$this->user_id,true);
 
+		$criteria->compare('title',$this->title,true);
+
+		$criteria->compare('view_count',$this->view_count,true);
+
+		$criteria->compare('favorite_count',$this->favorite_count,true);
+
+		$criteria->compare('answer_count',$this->answer_count,true);
+
+		$criteria->compare('vote_count',$this->vote_count,true);
+
+		$criteria->compare('bounty',$this->bounty,true);
+
 		$criteria->compare('create_time',$this->create_time);
 
 		$criteria->compare('create_ip',$this->create_ip,true);
 
+		$criteria->compare('locked',$this->locked);
+
+		$criteria->compare('tags',$this->tags,true);
+
 		$criteria->compare('content',$this->content,true);
 
-		return new CActiveDataProvider('Feedback', array(
+		return new CActiveDataProvider('Question', array(
 			'criteria'=>$criteria,
 		));
 	}
 
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @return Feedback the static model class
+	 * @return Question the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

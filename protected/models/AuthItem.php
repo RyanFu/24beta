@@ -1,24 +1,23 @@
 <?php
 
 /**
- * This is the model class for table "{{adcode}}".
+ * This is the model class for table "{{auth_item}}".
  *
- * The followings are the available columns in table '{{adcode}}':
- * @property string $id
- * @property string $ad_id
- * @property string $adcode
- * @property string $weight
- * @property string $intro
- * @property integer $state
+ * The followings are the available columns in table '{{auth_item}}':
+ * @property string $name
+ * @property integer $type
+ * @property string $description
+ * @property string $bizrule
+ * @property string $data
  */
-class Adcode extends CActiveRecord
+class AuthItem extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{adcode}}';
+		return '{{auth_item}}';
 	}
 
 	/**
@@ -29,13 +28,12 @@ class Adcode extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('state', 'numerical', 'integerOnly'=>true),
-			array('ad_id, weight', 'length', 'max'=>10),
-			array('intro', 'length', 'max'=>250),
-			array('adcode', 'safe'),
+			array('type', 'numerical', 'integerOnly'=>true),
+			array('name', 'length', 'max'=>64),
+			array('description, bizrule, data', 'safe'),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, ad_id, adcode, weight, intro, state', 'safe', 'on'=>'search'),
+			array('name, type, description, bizrule, data', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,12 +54,11 @@ class Adcode extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Id',
-			'ad_id' => 'Ad',
-			'adcode' => 'Adcode',
-			'weight' => 'Weight',
-			'intro' => 'Intro',
-			'state' => 'State',
+			'name' => 'Name',
+			'type' => 'Type',
+			'description' => 'Description',
+			'bizrule' => 'Bizrule',
+			'data' => 'Data',
 		);
 	}
 
@@ -83,26 +80,24 @@ class Adcode extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('name',$this->name,true);
 
-		$criteria->compare('ad_id',$this->ad_id,true);
+		$criteria->compare('type',$this->type);
 
-		$criteria->compare('adcode',$this->adcode,true);
+		$criteria->compare('description',$this->description,true);
 
-		$criteria->compare('weight',$this->weight,true);
+		$criteria->compare('bizrule',$this->bizrule,true);
 
-		$criteria->compare('intro',$this->intro,true);
+		$criteria->compare('data',$this->data,true);
 
-		$criteria->compare('state',$this->state);
-
-		return new CActiveDataProvider('Adcode', array(
+		return new CActiveDataProvider('AuthItem', array(
 			'criteria'=>$criteria,
 		));
 	}
 
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @return Adcode the static model class
+	 * @return AuthItem the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{

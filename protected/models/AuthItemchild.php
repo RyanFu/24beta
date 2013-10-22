@@ -1,24 +1,20 @@
 <?php
 
 /**
- * This is the model class for table "{{adcode}}".
+ * This is the model class for table "{{auth_itemchild}}".
  *
- * The followings are the available columns in table '{{adcode}}':
- * @property string $id
- * @property string $ad_id
- * @property string $adcode
- * @property string $weight
- * @property string $intro
- * @property integer $state
+ * The followings are the available columns in table '{{auth_itemchild}}':
+ * @property string $parent
+ * @property string $child
  */
-class Adcode extends CActiveRecord
+class AuthItemchild extends CActiveRecord
 {
 	/**
 	 * @return string the associated database table name
 	 */
 	public function tableName()
 	{
-		return '{{adcode}}';
+		return '{{auth_itemchild}}';
 	}
 
 	/**
@@ -29,13 +25,10 @@ class Adcode extends CActiveRecord
 		// NOTE: you should only define rules for those attributes that
 		// will receive user inputs.
 		return array(
-			array('state', 'numerical', 'integerOnly'=>true),
-			array('ad_id, weight', 'length', 'max'=>10),
-			array('intro', 'length', 'max'=>250),
-			array('adcode', 'safe'),
+			array('parent, child', 'length', 'max'=>64),
 			// The following rule is used by search().
 			// Please remove those attributes that should not be searched.
-			array('id, ad_id, adcode, weight, intro, state', 'safe', 'on'=>'search'),
+			array('parent, child', 'safe', 'on'=>'search'),
 		);
 	}
 
@@ -56,12 +49,8 @@ class Adcode extends CActiveRecord
 	public function attributeLabels()
 	{
 		return array(
-			'id' => 'Id',
-			'ad_id' => 'Ad',
-			'adcode' => 'Adcode',
-			'weight' => 'Weight',
-			'intro' => 'Intro',
-			'state' => 'State',
+			'parent' => 'Parent',
+			'child' => 'Child',
 		);
 	}
 
@@ -83,26 +72,18 @@ class Adcode extends CActiveRecord
 
 		$criteria=new CDbCriteria;
 
-		$criteria->compare('id',$this->id,true);
+		$criteria->compare('parent',$this->parent,true);
 
-		$criteria->compare('ad_id',$this->ad_id,true);
+		$criteria->compare('child',$this->child,true);
 
-		$criteria->compare('adcode',$this->adcode,true);
-
-		$criteria->compare('weight',$this->weight,true);
-
-		$criteria->compare('intro',$this->intro,true);
-
-		$criteria->compare('state',$this->state);
-
-		return new CActiveDataProvider('Adcode', array(
+		return new CActiveDataProvider('AuthItemchild', array(
 			'criteria'=>$criteria,
 		));
 	}
 
 	/**
 	 * Returns the static model of the specified AR class.
-	 * @return Adcode the static model class
+	 * @return AuthItemchild the static model class
 	 */
 	public static function model($className=__CLASS__)
 	{
