@@ -696,7 +696,7 @@ class CDImage
 	    
         $x = (int)$pos[0];
         $y = (int)$pos[1];
-	    self::textouter($this->_image, $text, $fontfile, $size, $x, $y, $color, $outer, $alpha, $padding, $angle);
+	    $this->textouter($this->_image, $text, $fontfile, $size, $x, $y, $color, $outer, $alpha, $padding, $angle);
 	    return $this;
 	}
     
@@ -978,7 +978,7 @@ class CDImage
 			throw new CDImageException('color value is invalid.');
 	}
 	
-	public static function textouter ($im, $text, $fontfile, $size, $x, $y, $color = array(0, 0, 0), $outer = array(255, 255, 255), $alpha = 0, $padding = 5, $angle = 0)
+	public function textouter ($im, $text, $fontfile, $size, $x, $y, $color = array(0, 0, 0), $outer = array(255, 255, 255), $alpha = 0, $padding = 5, $angle = 0)
 	{
 	    $x = (int)$x;
 	    $y = (int)$y;
