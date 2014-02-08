@@ -47,9 +47,9 @@ return array(
         ),
         'db' => array(
             'class' => 'CDbConnection',
-			'connectionString' => 'mysql:host=localhost; port=3306; dbname=cd_beta24',
-			'username' => 'root',
-		    'password' => 'cdc_790406',
+			'connectionString' => sprintf('mysql:host=%s; port=%s; dbname=%s', DB_MYSQL_HOST, DB_MYSQL_PORT, DB_MYSQL_DBNAME),
+			'username' => DB_MYSQL_USER,
+		    'password' => DB_MYSQL_PASSWORD,
 		    'charset' => 'utf8',
 		    'persistent' => false,
 		    'tablePrefix' => 'cd_',

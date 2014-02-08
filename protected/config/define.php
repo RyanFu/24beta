@@ -2,6 +2,12 @@
 define('CD_YES', 1);
 define('CD_NO', 0);
 
+define('DB_MYSQL_HOST', 'cdcchendb.mysql.rds.aliyuncs.com');
+define('DB_MYSQL_PORT', '3306');
+define('DB_MYSQL_DBNAME', 'cd_24beta');
+define('DB_MYSQL_USER', 'beta24');
+define('DB_MYSQL_PASSWORD', 'cdc_790406');
+
 define('SITE_DOMAIN', '24beta.com');
 define('CD_LAST_VISIT', 'beta_lastvisit');
 define('CD_CLIENT_ID', 'beta_clientid');
